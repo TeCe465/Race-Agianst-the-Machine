@@ -7,7 +7,7 @@ public class DontLookDown : MonoBehaviour
     // Start is called before the first frame update
     public Camera playerCam;
     public GameObject fallingCam;
-    public float angle = 0.30f;
+    public float angle = 42.5f;
     GameObject floor;
     public bool triggered = false;
 
@@ -19,7 +19,7 @@ public class DontLookDown : MonoBehaviour
     public void Update()
     {
         // Simple script to delete the floor if you look down
-        if (playerCam.transform.localRotation.x > angle)
+        if (playerCam.transform.eulerAngles.x > angle && playerCam.transform.eulerAngles.x < 100)
         {
             floor.gameObject.SetActive(false);
             playerCam.enabled = false;
