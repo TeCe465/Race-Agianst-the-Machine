@@ -6,7 +6,7 @@ public class CameraFlip : MonoBehaviour
 {
     // Start is called before the first frame update
     public bool flipped = false;
-    float timeLeft;
+    float timeLeft = 10f;
     void Start()
     {
     }

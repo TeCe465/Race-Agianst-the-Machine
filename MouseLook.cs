@@ -32,6 +32,7 @@ public class MouseLook : MonoBehaviour {
 
     // used for flipping the camera
     private float rotationZ = 0;
+    private float horzSens;
     GameObject conditions;
 	
 	void Start() {
@@ -42,29 +43,40 @@ public class MouseLook : MonoBehaviour {
 		Rigidbody body = GetComponent<Rigidbody>();
 		if (body != null)
 			body.freezeRotation = true;
-
- 
     }
 
 	void Update() {
         if (conditions.GetComponent<CameraFlip>().flipped)
+        {
+            horzSens = -sensitivityHor;
             rotationZ = 180;
+        }
+        else
+        {
+            rotationZ = 0;
+            horzSens = sensitivityHor;
+        }
 
 
 		if (axes == RotationAxes.MouseX) {
-			transform.Rotate(0, Input.GetAxis("Mouse X") * sensitivityHor, 0);
+			transform.Rotate(0, Input.GetAxis("Mouse X") * horzSens, 0);
 		}
 		else if (axes == RotationAxes.MouseY) {
-            _rotationX -= Input.GetAxis("Mouse Y") * sensitivityVert;
-            //_rotationX += Input.GetAxis("Mouse Y") * sensitivityVert;
+            if (!conditions.GetComponent<CameraFlip>().flipped)
+                _rotationX -= Input.GetAxis("Mouse Y") * sensitivityVert;
+            else
+                _rotationX += Input.GetAxis("Mouse Y") * sensitivityVert;
             _rotationX = Mathf.Clamp(_rotationX, minimumVert, maximumVert);
 
             transform.localEulerAngles = new Vector3(_rotationX, transform.localEulerAngles.y, rotationZ);
         }
 		else {
-			float rotationY = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityHor;
+			float rotationY = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * horzSens;
 
-			_rotationX -= Input.GetAxis("Mouse Y") * sensitivityVert;
+            if (!conditions.GetComponent<CameraFlip>().flipped)
+			    _rotationX -= Input.GetAxis("Mouse Y") * sensitivityVert;
+            else
+			    _rotationX += Input.GetAxis("Mouse Y") * sensitivityVert;
 			_rotationX = Mathf.Clamp(_rotationX, minimumVert, maximumVert);
 
             transform.localEulerAngles = new Vector3(_rotationX, rotationY, rotationZ);
