@@ -17,17 +17,24 @@ public class FPSInput : MonoBehaviour
 
     private CapsuleCollider capsuleCollider;
     private PlayerCharacter player;
-    public float speed = 3.0f;
+    private float speed = 3.0f;
+    private float SpeedMultiplier;
     public float gravity = -9.8f;
     public bool isGrounded;
+
+    // this will allow other scripts to alter the speed
+    public float defaultSpeed;
+    public float defaultSpeedMultiplier;
+    //i need a way for the speed to stop changing since i want it to be more modular. so i should put a bool trigger
 
     void Start()
     {
         player = GetComponent<PlayerCharacter>();
         capsuleCollider = GetComponent<CapsuleCollider>();
-        //_charController = GetComponent<CharacterController>();
         isCrouching = false;
         isWalkingBackwards = false;
+        speed = defaultSpeed;
+        SpeedMultiplier = defaultSpeedMultiplier;
     }
 
 
@@ -43,18 +50,12 @@ public class FPSInput : MonoBehaviour
             float deltaZ = Input.GetAxis("Vertical") * speed;
             movement = new Vector3(deltaX, 0, deltaZ);
             movement = Vector3.ClampMagnitude(movement, speed);
-            //movement.y = gravity;
-
-
-
             movement *= Time.deltaTime;
             movement = transform.TransformDirection(movement);
-            //_charController.Move(movement);
 
             if (Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.LeftShift))
             {
-                speed = 2.0f;
-                isWalkingBackwards = true;
+                    SpeedMultiplier = defaultSpeedMultiplier / 1.5f;
             }
             else
             {
@@ -63,15 +64,14 @@ public class FPSInput : MonoBehaviour
 
             if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S))
             {
-
-                speed = 7.0f;
+                    SpeedMultiplier = defaultSpeedMultiplier * 2f;
             }
             else
             {
-                speed = 3.0f;
+                //SpeedMultiplier = defaultSpeedMultiplier;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            if (Input.GetKey(KeyCode.Space) && isGrounded)
             {
                 Debug.Log("Jumping");
                 movement.y = 10f;
@@ -82,17 +82,27 @@ public class FPSInput : MonoBehaviour
                 movement.y = gravity;
 
             //make sure they dont cheat by pressing run and croutch at the same time
-            if ((!Input.GetKeyDown(KeyCode.LeftShift)) && (Input.GetKey(KeyCode.LeftControl)))
+            if ((!Input.GetKey(KeyCode.LeftShift)) && (Input.GetKey(KeyCode.LeftControl)))
             {
-                isCrouching = true;
-                capsuleCollider.height = 0.8f;
-                speed = 2.0f;
+                    SpeedMultiplier = defaultSpeedMultiplier / 1.5f;
+                    isCrouching = true;
+                    capsuleCollider.height = 0.8f;
             }
             else
             {
                 isCrouching = false;
                 capsuleCollider.height = 2.1f;
             }
+
+            //reset speed modified if player isnt using either crouch or run
+            if ((!Input.GetKey(KeyCode.LeftShift)) && (!Input.GetKey(KeyCode.LeftControl)))
+            {
+                SpeedMultiplier = defaultSpeedMultiplier;
+            }
+
+            // after everything has been adjusted, alter the speed!
+            speed = defaultSpeed * SpeedMultiplier;
+
 
         }
         else

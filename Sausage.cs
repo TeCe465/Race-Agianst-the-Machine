@@ -15,8 +15,9 @@ public class Sausage : MonoBehaviour
 
     IEnumerator sausage()
     {
-        int randomSeconds = Random.Range(5, 11);
+        int randomSeconds = Random.Range(5, 7);
         yield return new WaitForSeconds(randomSeconds);
         audioSource.PlayOneShot(audioSource.clip);
+        StartCoroutine(sausage());
     }
 }
