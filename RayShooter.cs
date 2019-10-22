@@ -25,7 +25,7 @@ public class RayShooter : MonoBehaviour
         Cursor.visible = false;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (player.isAlive)
         {
@@ -84,7 +84,7 @@ public class RayShooter : MonoBehaviour
                     }
                     catch
                     {
-                        Debug.Log("no hit object");
+                        // no hit object
                     }
 
                 }
@@ -109,11 +109,11 @@ public class RayShooter : MonoBehaviour
         Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponent<Collider>(), true);
         Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), player.GetComponent<Collider>(), true);
 
-        hitObject.GetComponent<Rigidbody>().MovePosition(guide.transform.position);
-        hitObject.GetComponent<Rigidbody>().MoveRotation(guide.transform.rotation);
+        //hitObject.GetComponent<Rigidbody>().MovePosition(guide.transform.position);
+        //hitObject.GetComponent<Rigidbody>().MoveRotation(guide.transform.rotation);
 
-        //hitObject.transform.position = guide.GetComponent<Transform>().position;
-        //hitObject.transform.rotation = guide.GetComponent<Transform>().rotation;
+        hitObject.transform.position = guide.GetComponent<Transform>().position;
+        hitObject.transform.rotation = guide.GetComponent<Transform>().rotation;
     }
     private void DropObj(GameObject hitObject)
     {
