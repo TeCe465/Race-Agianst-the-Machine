@@ -9,6 +9,7 @@ public class PlayerCharacter : MonoBehaviour
     public bool OnFloor = false;
     public bool takingDamage = false;
     public bool holdingObj = false;
+    public float maxCarryWeight = 0.8f;
 
     void Start()
     {

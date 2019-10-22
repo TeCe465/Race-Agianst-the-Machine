@@ -50,7 +50,7 @@ public class RayShooter : MonoBehaviour
 
                     try
                     {
-                        if (hitObject.GetComponent<Rigidbody>().mass < .8)
+                        if (hitObject.GetComponent<Rigidbody>().mass < player.maxCarryWeight)
                         {
                             //emission (highlights an objects when you can pick it up or interact with it)
                             if (!player.holdingObj)

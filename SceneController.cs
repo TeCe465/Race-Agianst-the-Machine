@@ -12,6 +12,7 @@ public class SceneController : MonoBehaviour
 
     void Start()
     {
+
         foreach(MonoBehaviour item in ConditionsObj.GetComponents<MonoBehaviour>())
         {
             conditionsList.Add(item);
