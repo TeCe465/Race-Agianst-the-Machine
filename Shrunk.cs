@@ -10,7 +10,6 @@ public class Shrunk : MonoBehaviour
     {
         
         player = GameObject.Find("Player").GetComponent<PlayerCharacter>();
-        //player.transform.localScale.Set(0.5f, 0.5f, 0.5f);
         player.transform.localScale -= new Vector3(PercentShrink/100,PercentShrink/100 ,PercentShrink/100);
 
     }

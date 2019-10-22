@@ -17,8 +17,11 @@ public class FPSInput : MonoBehaviour
 
     private CapsuleCollider capsuleCollider;
     private PlayerCharacter player;
+    GameObject conditions;
     private float speed = 3.0f;
     private float SpeedMultiplier;
+    private float deltaX;
+    private float deltaZ;
     public float gravity = -9.8f;
     public bool isGrounded;
 
@@ -29,6 +32,7 @@ public class FPSInput : MonoBehaviour
 
     void Start()
     {
+        conditions = GameObject.Find("Conditions");
         player = GetComponent<PlayerCharacter>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         isCrouching = false;
@@ -45,13 +49,17 @@ public class FPSInput : MonoBehaviour
         //this looks at the parent's playerCharacter and checks its health which allows me to disable movement when they die
         if (player.isAlive)
         {
-            transform.Translate(Input.GetAxis("Horizontal") * speed * Time.deltaTime, 0, Input.GetAxis("Vertical") * speed * Time.deltaTime);
-            float deltaX = Input.GetAxis("Horizontal") * speed;
-            float deltaZ = Input.GetAxis("Vertical") * speed;
-            movement = new Vector3(deltaX, 0, deltaZ);
-            movement = Vector3.ClampMagnitude(movement, speed);
-            movement *= Time.deltaTime;
-            movement = transform.TransformDirection(movement);
+            if (conditions.GetComponent<CameraFlip>().flipped)
+                deltaX = -(Input.GetAxis("Horizontal") * speed);
+            else
+                deltaX = Input.GetAxis("Horizontal") * speed;
+
+            deltaZ = Input.GetAxis("Vertical") * speed;
+            transform.Translate(deltaX * Time.deltaTime, 0, deltaZ * Time.deltaTime);
+            //movement = new Vector3(deltaX, 0, deltaZ);
+            //movement = Vector3.ClampMagnitude(movement, speed);
+            //movement *= Time.deltaTime;
+            //movement = transform.TransformDirection(movement);
 
             if (Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.LeftShift))
             {

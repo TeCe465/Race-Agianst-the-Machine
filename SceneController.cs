@@ -7,6 +7,8 @@ public class SceneController : MonoBehaviour
 {
     public Rigidbody[] allRigidBodies;
     public GameObject ConditionsObj;
+    public int NumOfConditions;
+    public bool RandomEnabled = false;
 
     List<MonoBehaviour> conditionsList = new List<MonoBehaviour>();
 
@@ -18,7 +20,15 @@ public class SceneController : MonoBehaviour
             conditionsList.Add(item);
         }
 
-        //conditionsList[1].enabled = true;
+        
+        if (RandomEnabled)
+        {
+            for (int i = 0; i < NumOfConditions; i++)
+            {
+                int rand = Random.Range(0, conditionsList.Count);
+                conditionsList[rand].enabled = true;
+            }
+        }
 
         allRigidBodies = Object.FindObjectsOfType<Rigidbody>();
         foreach(Rigidbody item in allRigidBodies)
