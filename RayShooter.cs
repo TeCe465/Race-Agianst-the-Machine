@@ -12,6 +12,7 @@ public class RayShooter : MonoBehaviour
     private Ray ray;
     private RaycastHit hit;
     private Vector3 point;
+    public GameObject Floor;
     GameObject emitting;
     GameObject itemHeld;
     public GameObject guide;
@@ -73,11 +74,6 @@ public class RayShooter : MonoBehaviour
                                         PickUpObj(itemHeld);
                                     }
                                 }
-                                //else
-                                //{
-                                //    if (hitObject.name == itemHeld.name)
-                                //        DropObj(itemHeld);
-                                //}
                             }
                             else 
                             {
@@ -85,11 +81,10 @@ public class RayShooter : MonoBehaviour
                                     DropObj(itemHeld);
                             }
                         }
-                        //that means player is holding an object, so drop it!
                     }
                     catch
                     {
-
+                        Debug.Log("no hit object");
                     }
 
                 }
@@ -110,6 +105,10 @@ public class RayShooter : MonoBehaviour
         player.holdingObj = true;
         hitObject.GetComponent<Rigidbody>().isKinematic = true;
         hitObject.GetComponent<Rigidbody>().useGravity = false;
+        // ignore collision with floor and player for the picked up object
+        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponent<Collider>(), true);
+        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), player.GetComponent<Collider>(), true);
+
         hitObject.GetComponent<Rigidbody>().MovePosition(guide.transform.position);
         hitObject.GetComponent<Rigidbody>().MoveRotation(guide.transform.rotation);
 
@@ -121,6 +120,8 @@ public class RayShooter : MonoBehaviour
         player.holdingObj = false;
         hitObject.GetComponent<Rigidbody>().isKinematic = false;
         hitObject.GetComponent<Rigidbody>().useGravity = true;
+        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponent<Collider>(), false);
+        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
     }
     IEnumerator ShowMessage(string message)
     {
