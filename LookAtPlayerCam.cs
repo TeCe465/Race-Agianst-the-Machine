@@ -4,18 +4,15 @@ using UnityEngine;
 
 public class LookAtPlayerCam : MonoBehaviour
 {
-    // Start is called before the first frame update
-    Camera playerCam;
+    GameObject player;
     void Start()
     {
-        //Debug.Log("Enabled");
-        playerCam = GameObject.Find("MainCamera").GetComponent<Camera>();
-        transform.position = playerCam.transform.position;
+        player = GameObject.Find("Player");
+        transform.position = player.transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        transform.LookAt(playerCam.transform.position);
+        transform.LookAt(player.transform.position);
     }
 }
