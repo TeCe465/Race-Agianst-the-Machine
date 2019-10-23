@@ -11,6 +11,11 @@ public class Shrunk : MonoBehaviour
         
         player = GameObject.Find("Player").GetComponent<PlayerCharacter>();
         player.transform.localScale -= new Vector3(PercentShrink/100,PercentShrink/100 ,PercentShrink/100);
-
     }
+
+    private void OnDisable()
+    {
+        player.transform.localScale = new Vector3(1, 1, 1);
+    }
+
 }
