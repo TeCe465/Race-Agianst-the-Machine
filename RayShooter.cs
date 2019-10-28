@@ -16,16 +16,18 @@ public class RayShooter : MonoBehaviour
     GameObject emitting;
     GameObject itemHeld;
     public GameObject guide;
+    private bool throwing;
 
     void Start()
     {
+        throwing = false;
         _camera = GetComponent<Camera>();
         player = GetComponentInParent<PlayerCharacter>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if (player.isAlive)
         {
@@ -70,9 +72,18 @@ public class RayShooter : MonoBehaviour
                                         interact.Interact();
                                     else
                                     {
-                                        itemHeld = hitObject.transform.gameObject;
-                                        PickUpObj(itemHeld);
+                                        if (!throwing)
+                                        {
+                                            itemHeld = hitObject.transform.gameObject;
+                                            PickUpObj(itemHeld);
+                                        }
                                     }
+                                }
+                                else if (Input.GetMouseButton(1) && !throwing)
+                                {
+                                    
+                                    DropObj(itemHeld);
+                                    StartCoroutine(ThrowObj(itemHeld));
                                 }
                             }
                             else 
@@ -89,7 +100,7 @@ public class RayShooter : MonoBehaviour
 
                 }
             }
-            if (player.holdingObj)
+            if (player.holdingObj && !throwing)
                 PickUpObj(itemHeld);
         }
         //player died!
@@ -98,6 +109,14 @@ public class RayShooter : MonoBehaviour
             if (player.holdingObj)
                 DropObj(itemHeld);
         }
+    }
+
+    IEnumerator ThrowObj(GameObject hitObject)
+    {
+        throwing = true;
+        hitObject.GetComponent<Rigidbody>().AddForce(this.transform.forward*hitObject.GetComponent<Rigidbody>().mass * player.throwStrength, ForceMode.Impulse);
+        yield return new WaitForSeconds(.8f);
+        throwing = false;
     }
 
     private void PickUpObj(GameObject hitObject)
@@ -118,10 +137,10 @@ public class RayShooter : MonoBehaviour
     private void DropObj(GameObject hitObject)
     {
         player.holdingObj = false;
-        hitObject.GetComponent<Rigidbody>().isKinematic = false;
-        hitObject.GetComponent<Rigidbody>().useGravity = true;
         Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponent<Collider>(), false);
         Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
+        hitObject.GetComponent<Rigidbody>().isKinematic = false;
+        hitObject.GetComponent<Rigidbody>().useGravity = true;
     }
     IEnumerator ShowMessage(string message)
     {

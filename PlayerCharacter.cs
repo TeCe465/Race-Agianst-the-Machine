@@ -10,6 +10,7 @@ public class PlayerCharacter : MonoBehaviour
     public bool takingDamage = false;
     public bool holdingObj = false;
     public float maxCarryWeight = 0.8f;
+    public float throwStrength = 10f;
 
     void Start()
     {

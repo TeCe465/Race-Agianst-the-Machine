@@ -22,7 +22,7 @@ public class FPSInput : MonoBehaviour
     private float SpeedMultiplier;
     private float deltaX;
     private float deltaZ;
-    public float gravity = 15f;
+    public float gravity = 35f;
     public bool isGrounded;
 
     public float maxVelocityChange = 10.0f;
@@ -90,9 +90,8 @@ public class FPSInput : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Space) && isGrounded)
             {
-                Debug.Log("Jumping");
-                GetComponent<Rigidbody>().AddForce(new Vector3(0, -1, 0), ForceMode.Impulse);
-                //isGrounded = false;
+                gravity = 35f;
+                GetComponent<Rigidbody>().AddForce(new Vector3(0, 10, 0), ForceMode.Impulse);
             }
             else
 
@@ -128,11 +127,17 @@ public class FPSInput : MonoBehaviour
     }
     void OnCollisionStay(Collision collision)
     {
-        if (collision.collider.name == "Floor")
-        {
-            isGrounded = true;
-        }
+        // This prevents the player from sliding down a slope when idling
+        if (!Input.anyKeyDown)
+            gravity = 0f;
         else
-            isGrounded = false;
+            gravity = 35f;
+
+        isGrounded = true;
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        gravity = 35f;
+        isGrounded = false;
     }
 }

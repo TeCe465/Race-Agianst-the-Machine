@@ -6,11 +6,13 @@ public class SuperStrength : MonoBehaviour
 {
     PlayerCharacter player;
     private float defaultCarryWeight;
+    public float maxCarryWeight = 30f;
+
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerCharacter>();
         defaultCarryWeight = player.maxCarryWeight;
-        player.maxCarryWeight = 30f;
+        player.maxCarryWeight = maxCarryWeight;
     }
     private void OnDisable()
     {
