@@ -12,7 +12,7 @@ public class RayShooter : MonoBehaviour
     private Ray ray;
     private RaycastHit hit;
     private Vector3 point;
-    public GameObject Floor;
+    private GameObject Floor;
     GameObject emitting;
     GameObject itemHeld;
     public GameObject guide;
@@ -20,6 +20,7 @@ public class RayShooter : MonoBehaviour
 
     void Start()
     {
+        Floor = GameObject.Find("Floor");
         throwing = false;
         _camera = GetComponent<Camera>();
         player = GetComponentInParent<PlayerCharacter>();
@@ -125,7 +126,7 @@ public class RayShooter : MonoBehaviour
         hitObject.GetComponent<Rigidbody>().isKinematic = true;
         hitObject.GetComponent<Rigidbody>().useGravity = false;
         // ignore collision with floor and player for the picked up object
-        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponent<Collider>(), true);
+        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponentInChildren<Collider>(), true);
         Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), player.GetComponent<Collider>(), true);
 
         //hitObject.GetComponent<Rigidbody>().MovePosition(guide.transform.position);
@@ -137,7 +138,7 @@ public class RayShooter : MonoBehaviour
     private void DropObj(GameObject hitObject)
     {
         player.holdingObj = false;
-        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponent<Collider>(), false);
+        Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), Floor.GetComponentInChildren<Collider>(), false);
         Physics.IgnoreCollision(hitObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
         hitObject.GetComponent<Rigidbody>().isKinematic = false;
         hitObject.GetComponent<Rigidbody>().useGravity = true;
