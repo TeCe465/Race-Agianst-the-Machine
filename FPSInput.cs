@@ -13,7 +13,6 @@ public class FPSInput : MonoBehaviour
     [System.NonSerialized] public bool isCrouching;
     [System.NonSerialized] public bool lightStatus;
     [System.NonSerialized] public bool isWalkingBackwards;
-    Rigidbody rigidbody;
 
     private CapsuleCollider capsuleCollider;
     private PlayerCharacter player;
@@ -33,7 +32,6 @@ public class FPSInput : MonoBehaviour
 
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
         conditions = GameObject.Find("Conditions");
         player = GetComponent<PlayerCharacter>();
         capsuleCollider = GetComponent<CapsuleCollider>();
@@ -64,10 +62,10 @@ public class FPSInput : MonoBehaviour
             Vector3 targetVelocity = new Vector3(deltaX, 0f, deltaZ);
             targetVelocity *= speed;
             targetVelocity = transform.TransformDirection(targetVelocity);
-            Vector3 velocityChange = (targetVelocity - rigidbody.velocity);
+            Vector3 velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
             velocityChange.y = 0;
-            rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
-            rigidbody.AddForce(new Vector3(0, -gravity * rigidbody.mass, 0));
+            GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
+            GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravity * GetComponent<Rigidbody>().mass, 0));
 
 
             // Movement Key Inputs
@@ -128,7 +126,7 @@ public class FPSInput : MonoBehaviour
     void OnCollisionStay(Collision collision)
     {
         // This prevents the player from sliding down a slope when idling
-        if (!Input.anyKeyDown)
+        if (!Input.anyKey)
             gravity = 0f;
         else
             gravity = 35f;

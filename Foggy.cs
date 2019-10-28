@@ -4,22 +4,16 @@ using UnityEngine;
 
 public class Foggy : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public float fogDensity = 0.6f;
     void Start()
     {
         RenderSettings.fog = true;
-        RenderSettings.fogDensity = 0.6f;
+        RenderSettings.fogDensity = fogDensity;
 
     }
 
     private void OnDisable()
     {
         RenderSettings.fog = false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
