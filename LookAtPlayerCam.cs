@@ -8,6 +8,7 @@ public class LookAtPlayerCam : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player");
+        player.GetComponent<FPSInput>().gravity = 35f;
         transform.position = player.transform.position;
     }
 
