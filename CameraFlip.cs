@@ -10,8 +10,8 @@ public class CameraFlip : MonoBehaviour
     public GameObject textMesh;
     float timeLeft = 10f;
     float flipTime;
-    private int minutes;
-    private int seconds;
+    int minutes;
+    int seconds;
     void Start()
     {
         textMesh.GetComponent<TextMeshProUGUI>().enabled = true;
@@ -50,7 +50,6 @@ public class CameraFlip : MonoBehaviour
     IEnumerator flip(float flipTime)
     {
         flipped = true;
-
         yield return new WaitForSeconds(flipTime);
         flipped = false;
         timeLeft = Random.Range(5, 10);

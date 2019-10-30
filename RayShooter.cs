@@ -30,6 +30,8 @@ public class RayShooter : MonoBehaviour
 
     void Update()
     {
+
+        
         if (player.isAlive)
         {
             point = new Vector3(_camera.pixelWidth / 2, _camera.pixelHeight / 2, 0);
