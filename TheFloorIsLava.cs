@@ -18,12 +18,12 @@ public class TheFloorIsLava : MonoBehaviour
         floor = GameObject.Find("Floor");
         player = GameObject.Find("Player").GetComponent<PlayerCharacter>();
 
-        Vector3 boxSize = floor.GetComponent<Collider>().bounds.size;
-        floor.GetComponent<Renderer>().material.shader = lava;
+        Vector3 boxSize = floor.GetComponentInChildren<Collider>().bounds.size;
+        floor.GetComponentInChildren<Renderer>().material.shader = lava;
 
-        for (float i = -boxSize.x/2 + 1; i < boxSize.x / 2; i += boxSize.x / 7)
+        for (float i = -boxSize.x/2 + 1; i < boxSize.x / 2; i += boxSize.x / 8)
         {
-            for (float j = -boxSize.z/2 + 1; j < boxSize.z / 2; j += boxSize.z / 7)
+            for (float j = -boxSize.z/2 + 1; j < boxSize.z / 2; j += boxSize.z / 8)
             {
                 //defines a random rotation
                 randomRotation = Quaternion.Euler(0, Random.Range(0, 360), 0);

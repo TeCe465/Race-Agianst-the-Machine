@@ -89,7 +89,7 @@ public class FPSInput : MonoBehaviour
             if (Input.GetKey(KeyCode.Space) && isGrounded)
             {
                 gravity = 35f;
-                GetComponent<Rigidbody>().AddForce(new Vector3(0, 10, 0), ForceMode.Impulse);
+                GetComponent<Rigidbody>().AddForce(new Vector3(0, 12, 0), ForceMode.Impulse);
             }
             else
 
@@ -118,6 +118,10 @@ public class FPSInput : MonoBehaviour
         }
         else
         {
+            gravity = 35f;
+
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             speed = 0;
             isCrouching = false;
             isWalkingBackwards = false;
@@ -127,9 +131,15 @@ public class FPSInput : MonoBehaviour
     {
         // This prevents the player from sliding down a slope when idling
         if (!Input.anyKey)
-            gravity = 0f;
-        else
-            gravity = 35f;
+            if (GetComponent<Rigidbody>().velocity.magnitude < .01)
+            {
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            }
+            else
+            {
+                gravity = 35f;
+            }
 
         isGrounded = true;
     }
