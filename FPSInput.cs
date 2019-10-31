@@ -6,9 +6,8 @@ using System.Collections;
 public class FPSInput : MonoBehaviour
 {
 
-    [System.NonSerialized] public bool isCrouching;
-    [System.NonSerialized] public bool lightStatus;
-    [System.NonSerialized] public bool isWalkingBackwards;
+    [System.NonSerialized] public bool isCrouching = false;
+    [System.NonSerialized] public bool isWalkingBackwards = false;
     public float JumpPower = 13f;
     private CapsuleCollider capsuleCollider;
     private PlayerCharacter player;
@@ -31,8 +30,6 @@ public class FPSInput : MonoBehaviour
         conditions = GameObject.Find("Conditions");
         player = GetComponent<PlayerCharacter>();
         capsuleCollider = GetComponent<CapsuleCollider>();
-        isCrouching = false;
-        isWalkingBackwards = false;
         speed = defaultSpeed;
         maxSpeed = speed + 3f;
         SpeedMultiplier = defaultSpeedMultiplier;
