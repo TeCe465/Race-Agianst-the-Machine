@@ -25,8 +25,6 @@ public class TheFloorIsLava : MonoBehaviour
             rend.material.shader = lava;
         }
 
-        //floor.GetComponentInChildren<Renderer>().material.shader = lava;
-
 
         for (float i = -boxSize.x/2 + 1; i < boxSize.x / 2; i += boxSize.x / 8)
         {
