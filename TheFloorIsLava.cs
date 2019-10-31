@@ -19,7 +19,14 @@ public class TheFloorIsLava : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<PlayerCharacter>();
 
         Vector3 boxSize = floor.GetComponentInChildren<Collider>().bounds.size;
-        floor.GetComponentInChildren<Renderer>().material.shader = lava;
+
+        foreach(Renderer rend in floor.GetComponentsInChildren<Renderer>())
+        {
+            rend.material.shader = lava;
+        }
+
+        //floor.GetComponentInChildren<Renderer>().material.shader = lava;
+
 
         for (float i = -boxSize.x/2 + 1; i < boxSize.x / 2; i += boxSize.x / 8)
         {

@@ -21,6 +21,7 @@ public class FPSInput : MonoBehaviour
     private float SpeedMultiplier;
     private float deltaX;
     private float deltaZ;
+    private bool stopped = false;
     public float gravity = 35f;
     public bool isGrounded;
 
@@ -49,6 +50,9 @@ public class FPSInput : MonoBehaviour
         //this looks at the parent's playerCharacter and checks its health which allows me to disable movement when they die
         if (player.isAlive)
         {
+            //if the player is revived somehow, disable stopped
+            stopped = false;
+
             // Inverse if camera is flipped
             if (conditions.GetComponent<CameraFlip>().flipped)
                 deltaX = -(Input.GetAxis("Horizontal"));
@@ -65,7 +69,6 @@ public class FPSInput : MonoBehaviour
             Vector3 velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
             velocityChange.y = 0;
             GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
-            GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravity * GetComponent<Rigidbody>().mass, 0));
 
 
             // Movement Key Inputs
@@ -118,20 +121,27 @@ public class FPSInput : MonoBehaviour
         }
         else
         {
-            gravity = 35f;
 
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
-            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            if (!stopped)
+            {
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                stopped = true;
+            }
+            gravity = 35f;
             speed = 0;
             isCrouching = false;
             isWalkingBackwards = false;
         }
+
+        // gravity is always applied
+        GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravity * GetComponent<Rigidbody>().mass, 0));
     }
     void OnCollisionStay(Collision collision)
     {
         // This prevents the player from sliding down a slope when idling
         if (!Input.anyKey)
-            if (GetComponent<Rigidbody>().velocity.magnitude < .01)
+            if (GetComponent<Rigidbody>().velocity.magnitude < .02)
             {
                 GetComponent<Rigidbody>().velocity = Vector3.zero;
                 GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
