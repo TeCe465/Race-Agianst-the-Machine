@@ -21,6 +21,7 @@ public class DontLookDown : MonoBehaviour
         // Simple script to delete the floor if you look down
         if (playerCam.transform.eulerAngles.x > angle && playerCam.transform.eulerAngles.x < 100)
         {
+            GameObject.Find("Player").GetComponent<PlayerCharacter>().health = 0;
             floor.gameObject.SetActive(false);
             playerCam.enabled = false;
             fallingCam.SetActive(true);

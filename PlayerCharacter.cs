@@ -41,7 +41,15 @@ public class PlayerCharacter : MonoBehaviour
     void OnCollisionStay(Collision collision)
     {
         //Debug.Log(collision.collider.name);
-        OnFloor = collision.collider.name == "Floor";
+        GameObject obj = collision.gameObject;
+        GameObject parent;
+        try
+        {
+            parent = obj.transform.parent.gameObject;
+            OnFloor = parent.name == "Floor";
+        }
+        catch { OnFloor = false;}
+
     }
 
 

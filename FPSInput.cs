@@ -2,18 +2,13 @@
 using System.Collections;
 
 // basic WASD-style movement control
-// commented out line demonstrates that transform.Translate instead of charController.Move doesn't have collision detection
-
-//[RequireComponent(typeof(CharacterController))]
 [AddComponentMenu("Control Script/FPS Input")]
 public class FPSInput : MonoBehaviour
 {
 
-    //[System.NonSerialized] public Vector3 movement;
-    [System.NonSerialized] public bool isCrouching;
-    [System.NonSerialized] public bool lightStatus;
-    [System.NonSerialized] public bool isWalkingBackwards;
-
+    [System.NonSerialized] public bool isCrouching = false;
+    [System.NonSerialized] public bool isWalkingBackwards = false;
+    public float JumpPower = 13f;
     private CapsuleCollider capsuleCollider;
     private PlayerCharacter player;
     GameObject conditions;
@@ -23,8 +18,8 @@ public class FPSInput : MonoBehaviour
     private float deltaZ;
     public float gravity = 35f;
     public bool isGrounded;
+    private float maxSpeed;
 
-    public float maxVelocityChange = 10.0f;
     // this will allow other scripts to alter the speed
     public float defaultSpeed;
     public float defaultSpeedMultiplier;
@@ -35,37 +30,66 @@ public class FPSInput : MonoBehaviour
         conditions = GameObject.Find("Conditions");
         player = GetComponent<PlayerCharacter>();
         capsuleCollider = GetComponent<CapsuleCollider>();
-        isCrouching = false;
-        isWalkingBackwards = false;
         speed = defaultSpeed;
+        maxSpeed = speed + 3f;
         SpeedMultiplier = defaultSpeedMultiplier;
     }
 
 
     void FixedUpdate()
     {
-
-
         //this looks at the parent's playerCharacter and checks its health which allows me to disable movement when they die
         if (player.isAlive)
         {
+
             // Inverse if camera is flipped
-            if (conditions.GetComponent<CameraFlip>().flipped)
-                deltaX = -(Input.GetAxis("Horizontal"));
-            else
-                deltaX = Input.GetAxis("Horizontal");
+            deltaX = conditions.GetComponent<CameraFlip>().flipped ? -(Input.GetAxis("Horizontal")) : Input.GetAxis("Horizontal");
 
             deltaZ = Input.GetAxis("Vertical");
 
-
-            // Movement Script
             Vector3 targetVelocity = new Vector3(deltaX, 0f, deltaZ);
+
             targetVelocity *= speed;
             targetVelocity = transform.TransformDirection(targetVelocity);
             Vector3 velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
-            velocityChange.y = 0;
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit))
+            {
+
+                float distance = Vector3.Distance(transform.position, hit.point);
+                //this checks if the player is airbourne
+                //Debug.Log(distance);
+
+                if (distance > 1.42f)
+                {
+                    gravity = 35f;
+                    GetComponent<Collider>().material.staticFriction = 0.0f;
+                    GetComponent<Collider>().material.dynamicFriction = 0.0f;
+                    GetComponent<Collider>().material = GetComponent<Collider>().material;
+                    isGrounded = false;
+                }
+                else
+                {
+                    if (GetComponent<Rigidbody>().velocity.magnitude < .6)
+                    {
+                        gravity = 0;
+                        GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    }
+                    else
+                        gravity = 35f;
+
+                    GetComponent<Collider>().material.staticFriction = 0.6f;
+                    GetComponent<Collider>().material.dynamicFriction = 0.6f;
+                    GetComponent<Collider>().material = GetComponent<Collider>().material;
+                    isGrounded = true;
+                }
+            }
+
+            // Setting max vertical speed
+            velocityChange.y = GetComponent<Rigidbody>().velocity.y > maxSpeed ? -1f : 0f;
+
+            //Apply changes
             GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
-            GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravity * GetComponent<Rigidbody>().mass, 0));
 
 
             // Movement Key Inputs
@@ -88,8 +112,7 @@ public class FPSInput : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Space) && isGrounded)
             {
-                gravity = 35f;
-                GetComponent<Rigidbody>().AddForce(new Vector3(0, 10, 0), ForceMode.Impulse);
+                GetComponent<Rigidbody>().AddForce(new Vector3(0, JumpPower, 0), ForceMode.Impulse);
             }
             else
 
@@ -118,24 +141,13 @@ public class FPSInput : MonoBehaviour
         }
         else
         {
-            speed = 0;
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             isCrouching = false;
             isWalkingBackwards = false;
         }
-    }
-    void OnCollisionStay(Collision collision)
-    {
-        // This prevents the player from sliding down a slope when idling
-        if (!Input.anyKey)
-            gravity = 0f;
-        else
-            gravity = 35f;
 
-        isGrounded = true;
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        gravity = 35f;
-        isGrounded = false;
+        // gravity is always applied
+        GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravity * GetComponent<Rigidbody>().mass, 0));
     }
 }
