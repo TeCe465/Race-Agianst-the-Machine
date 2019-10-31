@@ -118,6 +118,7 @@ public class FPSInput : MonoBehaviour
             // after everything has been adjusted, alter the speed!
             speed = defaultSpeed * SpeedMultiplier;
 
+
         }
         else
         {
@@ -141,17 +142,26 @@ public class FPSInput : MonoBehaviour
     {
         // This prevents the player from sliding down a slope when idling
         if (!Input.anyKey)
+        {
             if (GetComponent<Rigidbody>().velocity.magnitude < .02)
             {
                 GetComponent<Rigidbody>().velocity = Vector3.zero;
                 GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             }
-            else
-            {
-                gravity = 35f;
-            }
 
-        isGrounded = true;
+        }
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            //GameObject hitObj = hit.transform.gameObject;
+            float distance = Vector3.Distance(transform.position, hit.point);
+            if (distance > 3f)
+                isGrounded = false;
+            else
+                isGrounded = true;
+
+        }
+
     }
     private void OnCollisionExit(Collision collision)
     {
