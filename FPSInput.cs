@@ -2,14 +2,10 @@
 using System.Collections;
 
 // basic WASD-style movement control
-// commented out line demonstrates that transform.Translate instead of charController.Move doesn't have collision detection
-
-//[RequireComponent(typeof(CharacterController))]
 [AddComponentMenu("Control Script/FPS Input")]
 public class FPSInput : MonoBehaviour
 {
 
-    //[System.NonSerialized] public Vector3 movement;
     [System.NonSerialized] public bool isCrouching;
     [System.NonSerialized] public bool lightStatus;
     [System.NonSerialized] public bool isWalkingBackwards;
@@ -21,7 +17,6 @@ public class FPSInput : MonoBehaviour
     private float SpeedMultiplier;
     private float deltaX;
     private float deltaZ;
-    private bool stopped = false;
     public float gravity = 35f;
     public bool isGrounded;
     private float maxSpeed;
@@ -49,55 +44,53 @@ public class FPSInput : MonoBehaviour
         //this looks at the parent's playerCharacter and checks its health which allows me to disable movement when they die
         if (player.isAlive)
         {
-            //if the player is revived somehow, disable stopped
-            stopped = false;
 
             // Inverse if camera is flipped
-            if (conditions.GetComponent<CameraFlip>().flipped)
-                deltaX = -(Input.GetAxis("Horizontal"));
-            else
-                deltaX = Input.GetAxis("Horizontal");
+            deltaX = conditions.GetComponent<CameraFlip>().flipped ? -(Input.GetAxis("Horizontal")) : Input.GetAxis("Horizontal");
 
             deltaZ = Input.GetAxis("Vertical");
 
             Vector3 targetVelocity = new Vector3(deltaX, 0f, deltaZ);
-            Vector3 velocityChange = new Vector3();
 
             targetVelocity *= speed;
             targetVelocity = transform.TransformDirection(targetVelocity);
-            velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
+            Vector3 velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit))
             {
 
                 float distance = Vector3.Distance(transform.position, hit.point);
                 //this checks if the player is airbourne
-                //Debug.Log(distance + ": " + "isColliding: " + isColliding);
+                //Debug.Log(distance);
 
-                if (distance > 1.3f)
+                if (distance > 1.42f)
                 {
+                    gravity = 35f;
                     GetComponent<Collider>().material.staticFriction = 0.0f;
                     GetComponent<Collider>().material.dynamicFriction = 0.0f;
-                    GetComponent<Collider>().material = GetComponent<Collider>().material; // WTF
+                    GetComponent<Collider>().material = GetComponent<Collider>().material;
                     isGrounded = false;
                 }
                 else
                 {
+                    if (GetComponent<Rigidbody>().velocity.magnitude < .6)
+                    {
+                        gravity = 0;
+                        GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    }
+                    else
+                        gravity = 35f;
+
                     GetComponent<Collider>().material.staticFriction = 0.6f;
                     GetComponent<Collider>().material.dynamicFriction = 0.6f;
-                    GetComponent<Collider>().material = GetComponent<Collider>().material; // WTF
+                    GetComponent<Collider>().material = GetComponent<Collider>().material;
                     isGrounded = true;
                 }
             }
 
-            Debug.Log(GetComponent<Rigidbody>().velocity.y);
             // Setting max vertical speed
-            if (GetComponent<Rigidbody>().velocity.y > maxSpeed)
-            {
-                velocityChange.y = -3f;
-            }
-            else
-                velocityChange.y = 0;
+            velocityChange.y = GetComponent<Rigidbody>().velocity.y > maxSpeed ? -1f : 0f;
+
             //Apply changes
             GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
 
@@ -122,7 +115,6 @@ public class FPSInput : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Space) && isGrounded)
             {
-                gravity = 35f;
                 GetComponent<Rigidbody>().AddForce(new Vector3(0, JumpPower, 0), ForceMode.Impulse);
             }
             else
@@ -148,37 +140,17 @@ public class FPSInput : MonoBehaviour
 
             // after everything has been adjusted, alter the speed!
             speed = defaultSpeed * SpeedMultiplier;
-            Debug.Log("Velocity: " + GetComponent<Rigidbody>().velocity.magnitude);
-
 
         }
         else
         {
-
-            if (!stopped)
-            {
-                GetComponent<Rigidbody>().velocity = Vector3.zero;
-                GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-                stopped = true;
-            }
-            gravity = 35f;
-            speed = 0;
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             isCrouching = false;
             isWalkingBackwards = false;
         }
 
         // gravity is always applied
         GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravity * GetComponent<Rigidbody>().mass, 0));
-    }
-    void OnCollisionStay(Collision collision)
-    {
-
-        // stop player from sliding
-        if (GetComponent<Rigidbody>().velocity.magnitude < .02)
-        {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
-            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        }
-
     }
 }
