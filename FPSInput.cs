@@ -24,6 +24,7 @@ public class FPSInput : MonoBehaviour
     private bool stopped = false;
     public float gravity = 35f;
     public bool isGrounded;
+    private bool isColliding = false;
 
     public float maxVelocityChange = 10.0f;
     // this will allow other scripts to alter the speed
@@ -61,15 +62,38 @@ public class FPSInput : MonoBehaviour
 
             deltaZ = Input.GetAxis("Vertical");
 
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit))
+            {
+                float distance = Vector3.Distance(transform.position, hit.point);
+                //this checks if the player is airbourne
+                if (distance < 1.5f && isColliding)
+                {
+                    // Movement Script
+                    Vector3 targetVelocity = new Vector3(deltaX, 0f, deltaZ);
+                    targetVelocity *= speed;
+                    targetVelocity = transform.TransformDirection(targetVelocity);
+                    Vector3 velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
+                    velocityChange.y = 0;
+                    GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
+                    isGrounded = true;
+                }
+                // This checks if the player is airbourne and not pushing agianst a wall
+                else if (distance > 1.5f && !isColliding)
+                {
+                    // Movement Script
+                    Vector3 targetVelocity = new Vector3(deltaX, 0f, deltaZ);
+                    targetVelocity *= speed;
+                    targetVelocity = transform.TransformDirection(targetVelocity);
+                    Vector3 velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
+                    velocityChange.y = 0;
+                    GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
+                    isGrounded = false;
 
-            // Movement Script
-            Vector3 targetVelocity = new Vector3(deltaX, 0f, deltaZ);
-            targetVelocity *= speed;
-            targetVelocity = transform.TransformDirection(targetVelocity);
-            Vector3 velocityChange = (targetVelocity - GetComponent<Rigidbody>().velocity);
-            velocityChange.y = 0;
-            GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.VelocityChange);
-
+                }
+                else
+                    isGrounded = false;
+            }
 
             // Movement Key Inputs
             if (Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.LeftShift))
@@ -140,32 +164,34 @@ public class FPSInput : MonoBehaviour
     }
     void OnCollisionStay(Collision collision)
     {
-        // This prevents the player from sliding down a slope when idling
-        if (!Input.anyKey)
-        {
-            if (GetComponent<Rigidbody>().velocity.magnitude < .02)
-            {
-                GetComponent<Rigidbody>().velocity = Vector3.zero;
-                GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-            }
-
-        }
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit))
-        {
-            //GameObject hitObj = hit.transform.gameObject;
-            float distance = Vector3.Distance(transform.position, hit.point);
-            if (distance > 3f)
-                isGrounded = false;
-            else
-                isGrounded = true;
-
-        }
-
+        //if player is colliding with something, stop it
+        isColliding = true;
     }
+    //    // This prevents the player from sliding down a slope when idling
+    //    if (!Input.anyKey)
+    //    {
+    //        if (GetComponent<Rigidbody>().velocity.magnitude < .02)
+    //        {
+    //            GetComponent<Rigidbody>().velocity = Vector3.zero;
+    //            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+    //        }
+
+    //    }
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(transform.position, Vector3.down, out hit))
+    //    {
+    //        //GameObject hitObj = hit.transform.gameObject;
+    //        float distance = Vector3.Distance(transform.position, hit.point);
+    //        if (distance > 3f)
+    //            isGrounded = false;
+    //        else
+    //            isGrounded = true;
+
+    //    }
+
+    //}
     private void OnCollisionExit(Collision collision)
     {
-        gravity = 35f;
-        isGrounded = false;
+        isColliding = false;
     }
 }
