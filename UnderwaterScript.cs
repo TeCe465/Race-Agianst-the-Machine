@@ -11,7 +11,7 @@ public class UnderwaterScript : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player");
-        audioSource = GameObject.Find("AudioController").GetComponents<AudioSource>();
+        audioSource = GameObject.Find("RoomAudio").GetComponents<AudioSource>();
     }
 
     // Update is called once per frame
@@ -21,6 +21,7 @@ public class UnderwaterScript : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other);
         audioSource[0].Play();
         // Turn on the flashlights
         foreach(Light light in player.GetComponentsInChildren<Light>())
