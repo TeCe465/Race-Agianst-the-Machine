@@ -21,22 +21,27 @@ public class UnderwaterScript : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other);
-        audioSource[0].Play();
-        // Turn on the flashlights
-        foreach(Light light in player.GetComponentsInChildren<Light>())
+        //Debug.Log(other);
+        if (other.name == "Player")
         {
-            light.enabled = true;
+            audioSource[0].Play();
+            // Turn on the flashlights
+            foreach (Light light in player.GetComponentsInChildren<Light>())
+            {
+                light.enabled = true;
+            }
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        audioSource[0].Stop();
-        // Turn on the flashlights
-        foreach(Light light in player.GetComponentsInChildren<Light>())
+        if (other.name == "Player")
         {
-            light.enabled = false;
+            audioSource[0].Stop();
+            // Turn on the flashlights
+            foreach (Light light in player.GetComponentsInChildren<Light>())
+            {
+                light.enabled = false;
+            }
         }
-
     }
 }
