@@ -5,28 +5,24 @@ using UnityEngine;
 public class UnderwaterScript : MonoBehaviour
 {
     AudioSource[] audioSource;
-    GameObject player;
+    Light[] lightSource;
 
-    // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player");
+        lightSource = GameObject.Find("Player").GetComponentsInChildren<Light>();
         audioSource = GameObject.Find("RoomAudio").GetComponents<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //void Update()
+    //{
+    //}
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log(other);
-        if (other.name == "Player")
+        if (other.name == "Head")
         {
             audioSource[0].Play();
             // Turn on the flashlights
-            foreach (Light light in player.GetComponentsInChildren<Light>())
+            foreach (Light light in lightSource)
             {
                 light.enabled = true;
             }
@@ -34,11 +30,11 @@ public class UnderwaterScript : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.name == "Player")
+        if (other.name == "Head")
         {
             audioSource[0].Stop();
-            // Turn on the flashlights
-            foreach (Light light in player.GetComponentsInChildren<Light>())
+            // Turn off the flashlights
+            foreach (Light light in lightSource)
             {
                 light.enabled = false;
             }
