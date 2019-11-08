@@ -55,11 +55,9 @@ public class FPSInput : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit))
             {
-
                 float distance = Vector3.Distance(transform.position, hit.point);
                 //this checks if the player is airbourne
                 //Debug.Log(distance);
-
                 if (distance > 1.42f)
                 {
                     gravity = 35f;
@@ -70,18 +68,22 @@ public class FPSInput : MonoBehaviour
                 }
                 else
                 {
-                    if (GetComponent<Rigidbody>().velocity.magnitude < .6)
-                    {
-                        gravity = 0;
-                        GetComponent<Rigidbody>().velocity = Vector3.zero;
-                    }
-                    else
-                        gravity = 35f;
 
-                    GetComponent<Collider>().material.staticFriction = 0.6f;
-                    GetComponent<Collider>().material.dynamicFriction = 0.6f;
-                    GetComponent<Collider>().material = GetComponent<Collider>().material;
-                    isGrounded = true;
+                    if (hit.transform.name != "PostProcessing")
+                    {
+                        if (GetComponent<Rigidbody>().velocity.magnitude < .6)
+                        {
+                            gravity = 0;
+                            GetComponent<Rigidbody>().velocity = Vector3.zero;
+                        }
+                        else
+                            gravity = 35f;
+
+                        GetComponent<Collider>().material.staticFriction = 0.6f;
+                        GetComponent<Collider>().material.dynamicFriction = 0.6f;
+                        GetComponent<Collider>().material = GetComponent<Collider>().material;
+                        isGrounded = true;
+                    }
                 }
             }
 
@@ -94,27 +96,15 @@ public class FPSInput : MonoBehaviour
 
             // Movement Key Inputs
             if (Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.LeftShift))
-            {
                 SpeedMultiplier = defaultSpeedMultiplier / 1.5f;
-            }
             else
-            {
                 isWalkingBackwards = false;
-            }
 
-            if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S))
-            {
+            if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S) && isGrounded)
                 SpeedMultiplier = defaultSpeedMultiplier * 2f;
-            }
-            else
-            {
-            }
 
             if (Input.GetKey(KeyCode.Space) && isGrounded)
-            {
                 GetComponent<Rigidbody>().AddForce(new Vector3(0, JumpPower, 0), ForceMode.Impulse);
-            }
-            else
 
             //make sure they dont cheat by pressing run and croutch at the same time
             if ((!Input.GetKey(KeyCode.LeftShift)) && (Input.GetKey(KeyCode.LeftControl)))
@@ -131,9 +121,7 @@ public class FPSInput : MonoBehaviour
 
             //reset speed modified if player isnt using either crouch or run
             if ((!Input.GetKey(KeyCode.LeftShift)) && (!Input.GetKey(KeyCode.LeftControl)))
-            {
                 SpeedMultiplier = defaultSpeedMultiplier;
-            }
 
             // after everything has been adjusted, alter the speed!
             speed = defaultSpeed * SpeedMultiplier;
