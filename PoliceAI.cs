@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class PoliceAI : MonoBehaviour
+{
+    // Start is called before the first frame update
+    [NonSerialized] public NavMeshAgent navMeshAgent;
+    [NonSerialized] public GameObject Player;
+    //public bool isWalking = true;
+    //public bool isPunching = false;
+    void Start()
+    {
+        Player = GameObject.Find("Player");
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshAgent.speed = 5;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Vector3.Distance(transform.position, Player.transform.position) > 2)
+        {
+            navMeshAgent.SetDestination(Player.transform.position);
+            navMeshAgent.isStopped = false;
+        }
+        else
+        {
+            navMeshAgent.isStopped = true;
+        }
+    }
+}

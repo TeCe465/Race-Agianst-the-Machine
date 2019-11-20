@@ -23,6 +23,7 @@ public class PlayerCharacter : MonoBehaviour
         if (health > maxHealth)
             health = maxHealth;
 
+
         if (health <= 0)
         {
             isAlive = false;
@@ -57,12 +58,9 @@ public class PlayerCharacter : MonoBehaviour
     {
         takingDamage = true;
 
-        if (health <= damage)
-            health = 0;
-        else
-            health -= damage;
+        health = health <= damage ? 0 : health - damage;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.7f);
         takingDamage = false;
 
     }
