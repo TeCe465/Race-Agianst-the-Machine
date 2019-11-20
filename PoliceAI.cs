@@ -28,6 +28,8 @@ public class PoliceAI : MonoBehaviour
         }
         else
         {
+            transform.LookAt(Player.transform.position);
+            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
             navMeshAgent.isStopped = true;
         }
     }
