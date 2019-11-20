@@ -21,7 +21,7 @@ public class PoliceAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Vector3.Distance(transform.position, Player.transform.position) > 2)
+        if (Vector3.Distance(transform.position, Player.transform.position) > 3)
         {
             navMeshAgent.SetDestination(Player.transform.position);
             navMeshAgent.isStopped = false;
