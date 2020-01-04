@@ -8,6 +8,7 @@ public class SceneController : MonoBehaviour
     public GameObject ConditionsObj;
     public int NumOfConditions;
     public bool RandomEnabled = false;
+    public int HelpingHand = 0;
 
     List<MonoBehaviour> conditionsList = new List<MonoBehaviour>();
 
